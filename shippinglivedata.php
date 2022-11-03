@@ -2,6 +2,11 @@
 
 include_once("php/connect.php");
 
+/**
+ * This query returns all the address information from SAGE200, Billing Address and Delivery Address
+ *
+ */
+
 $tsql = "SELECT DISTINCT [DocumentNo]
             ,ISNULL(dd.PostalName, '') AS PostalName
             ,ISNULL(dd.AddressLine1, '') AS AddressLine1
@@ -56,12 +61,3 @@ $all_sales = array();
 
 
 $all_data = array($results);
-// die(json_encode($all_data));
-
-
-// pm2 start home.py --name qcreports-app --interpreter=python
-
-
-// pm2 start run_app.py --name qcreports-app --interpreter=python
-
-// pm2 start manage.py --name morningm-app --interpreter=django
