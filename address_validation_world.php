@@ -77,7 +77,9 @@ function my_mail_function($mainarray,$status_r, $SO,$DocumentCreatedBy, $host_sm
                     <tbody><tr>
                         <td style="font-family:Helvetica,Arial,sans-serif;vertical-align:top;background-color:#f5f5f5;padding:25px">
                             <a href="add here" style="color:#006bb4;text-decoration:none" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://192.168.1.20:9080/returns/&amp;source=gmail&amp;ust=1612601796007000&amp;usg=AFQjCNE-9sJxAcKiv0WIspaH5uSkuwfkOQ">
-							<img width="180" src="https://www.mullanlighting.com/media/logo/websites/1/mullan-lighting-logox2.png" alt="Mullan Lighting" border="0" style="border:0;height:auto;line-height:100%;outline:none;text-decoration:none" class="CToWUd">
+							<img width="180"
+
+                            border="0" style="border:0;height:auto;line-height:100%;outline:none;text-decoration:none" class="CToWUd">
                             </a>
                         </td>
                     </tr>
