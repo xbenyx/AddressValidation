@@ -1,6 +1,46 @@
-# AddressValidation
-The app validates addresses, it was mainly tested in Sage200 Cloud.
+# Introduction Sage200 Address Validation Tool
 
-## Installation
+This app validates that the customer address is correct. In some cases, customers make mistakes or sometimes staff members input the address manually in their ERP system causing errors. With an address validation tool you can save time and money as it will detect than an address is incorrect before you send it over.
 
-Use composer install
+How it works? The app runs X times per day and access to Sage200 database and reads all live Sales Orders. If the delivery address is marked as billing address, it will go to the account and get the billing information. Otherwise it will use the delivery address. Then will send the address data to the third party address validation tool, if the score is 100% (perfect match) the process will end. If the score is below 100% it will send an email, showing that the address is incorrect and it some cases will show an alternative address. i.e city could be this or postal code this?
+
+If the address is correct but data is in the wrong fields, can I get a different email? Yes, it will send a different email canned response. Sometimes customers/staff input the address in the wrong fields and that could affect shipping integrations as all the data is over the place
+
+Languague: The app is developed in PHP.
+
+## Before you start
+
+Install all the dependencies from the composer.json. We recomend use linux and set up a cron job to run the script. (Note. you can use a Raspberry Pi)
+
+1) Go to the folder project and cmd "composer install"  (Note: You will need composer. [here](https://getcomposer.org/download/) )
+2) Add your credentials. Go to the folder PHP-> config.php
+2.1) Set up email; host_smtp -> your provider, email-> your email, password-> your password, emailto-> which email will receive the notifications (Note. if you are using gmail, you'll need to enable third party apps)
+2.2) Set database connection; database-> name of your database, database_user-> your database user, database_pwd-> your database password (Note. this application is using MSSQL but it could be easily configured to use MySQL)
+2.3) Set up Api for validation; we tested this app with multiple courier companies but we found that Nextbillion api offers the same at an amazing price. nextbillion_token -> add the bearer token here.
+
+How to run it automatically? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
+
+## API used for Address Validation
+
+When we started this project, we used different third party applications and even some free tools such as UPS address validation tool. For example UPS USA, it is a free tool and works really well but we found a different tool that maybe it is not directly a address validation tool but i can be used as one and covers mostly all the countries in the world. When I requested some quotations, average price were over 1500€ monthly. Next Billion app claims to be free for 100000 api calls, that is more than enough for our project.
+
+For our project we will be using Geocode (Note. You will need to contact them to get a token key)
+
+API Geocode Documentation [here](https://docs.nextbillion.ai/docs/places/api/geocode)
+
+Endpoint: https://api.nextbillion.io/h/geocode
+
+i.e.
+
+Below is a demo video showing how to test the api using postman.
+
+![xbenyx - Animated gif demo](demo/postman.gif)
+
+
+Other documentation and information below
+
+Main website is [here](https://api.nextbillion.io)
+
+API Documentation is [here](https://docs.nextbillion.ai/)
+
+
