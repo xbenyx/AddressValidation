@@ -65,10 +65,10 @@ Endpoint: https://api.nextbillion.io/h/geocode
 
 i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Barrio Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
 
-{{apitoken}} its the bearer token
-q= its all the address
-&limit= Limit this to 3 max as we need to return address alternatives in case that address is wrong
-&in= Country code or Name
+      {{apitoken}} its the bearer token
+      q= its all the address
+      &limit= Limit this to 3 max as we need to return address alternatives in case that address is wrong
+      &in= Country code or Name
 
 Below is a demo video showing how to test the api using postman.
 
