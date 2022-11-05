@@ -23,6 +23,7 @@ How to run it automatically? Go to your cron jobs (linux) and set up a job to ru
 ## DB Variables
 
 Global Variables
+
       "UseInvoiceAddress" -> Boolean, if its 0 use Delivery Address and 1 use Billing Address
       "DocumentNo": -> Indicates the Sales Order Number
 
