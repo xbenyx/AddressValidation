@@ -20,6 +20,38 @@ Install all the dependencies from the composer.json. We recomend use linux and s
 
 How to run it automatically? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
 
+## DB Variables
+
+Global Variables
+      "UseInvoiceAddress" -> Boolean, if its 0 use Delivery Address and 1 use Billing Address
+      "DocumentNo": -> Indicates the Sales Order Number
+
+Delivery Address
+
+      "PostalName"
+      "AddressLine1"
+      "AddressLine2"
+      "PostCode"
+      "City"
+      "Country"
+      "Contact"
+      "TelephoneNo"
+      "EmailAddress"
+
+Billing Address
+
+      "AddressLine1inv"
+      "AddressLine2inv"
+      "PostCodeinv"
+      "Cityinv"
+      "Countryinv"
+      "MainTelephoneSubscriberNumber"
+      "DefaultEmail"
+
+## Testing without database
+
+In the folder demo, it is a json array sample with 2 scenarios, using billing address and using delivery address.
+
 ## API used for Address Validation
 
 When we started this project, we used different third party applications and even some free tools such as UPS address validation tool. For example UPS USA, it is a free tool and works really well but we found a different tool that maybe it is not directly a address validation tool but i can be used as one and covers mostly all the countries in the world. When I requested some quotations, average price were over 1500€ monthly. Next Billion app claims to be free for 100000 api calls, that is more than enough for our project.
@@ -30,12 +62,16 @@ API Geocode Documentation [here](https://docs.nextbillion.ai/docs/places/api/geo
 
 Endpoint: https://api.nextbillion.io/h/geocode
 
-i.e.
+i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Barrio Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
+
+{{apitoken}} its the bearer token
+q= its all the address
+&limit= Limit this to 3 max as we need to return address alternatives in case that address is wrong
+&in= Country code or Name
 
 Below is a demo video showing how to test the api using postman.
 
 ![xbenyx - Animated gif demo](demo/postman.gif)
-
 
 Other documentation and information below
 
