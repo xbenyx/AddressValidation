@@ -6,71 +6,64 @@ include_once("php/conf.php");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// // // //
-$url = 'https://api.nextbillion.io/h/geocode?q=';  // ups URL for api request
-$nextbillion_token = PARAMS['nextbillion_token'];$host_smtp = PARAMS['host_smtp'];$email = PARAMS['email'];$pwd = PARAMS['pwd']; // Credentials
-// // // //
-
-getLiveAddressSage($all_data, $url, $nextbillion_token);
+getLiveAddressSage($all_data);
 
 /**
  * This function checks all the live orders in Production where Country is XXX and request address validation
  *
- * @param string $status API response, options are; success or failure
- * @param string $SO Sales Order Numbre
- * @param string $DocumentCreatedBy  Sales Representative name
- * @param string $host_smtp   host smtp
- * @param string $email   Who is sending the email
- * @param string $pwd   Password of who is sending the email
- * @param string $emailto   Who is receiving the email
+ * @param array $mainarray Object array of doc
+ * @param array $original_address object array of the original address
+ * @param array $other_address object array of the address gotten form api
+ * @param string $status  Stateus of the address (alternate, mismatched, notfound)
  */
 
-function my_mail_function($mainarray,$status_r, $SO,$DocumentCreatedBy, $host_smtp, $email, $pwd,$emailto){
+function my_mail_function($mainarray, $original_address, $other_address, $status)
+{
 
-	// Usar la funcion PHPmailer para enviar correos
-	$mail = new PHPMailer(true);
+    $host_smtp = PARAMS['host_smtp'];
+    $email = PARAMS['email'];
+    $pwd = PARAMS['pwd'];
+    $emailto = PARAMS['emailto'];
+
+    $SO =  $mainarray['DocumentNo'];
+    $DocumentCreatedBy = $mainarray['DocumentCreatedBy'];
+
+    // Usar la funcion PHPmailer para enviar correos
+    $mail = new PHPMailer(true);
 
     // SMTP SETTING
-        $mail->IsSMTP();
-		$mail->SMTPAuth = true; // authentication enabled
-		$mail->SMTPSecure = 'tls';
-		$mail->Host = $host_smtp;
-		$mail->Port = 587;
-		$mail->Username = $email;
-		$mail->Password = $pwd;
+    $mail->IsSMTP();
+    $mail->SMTPAuth = true; // authentication enabled
+    $mail->SMTPSecure = 'tls';
+    $mail->Host = $host_smtp;
+    $mail->Port = 587;
+    $mail->Username = $email;
+    $mail->Password = $pwd;
 
-		//Recipients
-		$mail->setFrom($email, 'Shipping Error.');
-		$mail->addAddress($emailto, 'Important');
+    //Recipients
+    $mail->setFrom($email, 'Shipping Error.');
 
-        // Data about postalcode, city, state or email
+    $mail->addAddress($emailto, 'Important');
 
-        if($mainarray['UseInvoiceAddress'] == 0){ //UseInvoiceAddress = 0 means send to Delivery Address
-            $PostCode = $mainarray['PostCode'];
-            $City = $mainarray['City'];
-            $State = $mainarray['State'];
-            $Email = $mainarray['EmailAddress'];
-        }elseif($mainarray['UseInvoiceAddress'] == 1) { //UseInvoiceAddress = 1 means send to Invoice Address
-            $PostCode = $mainarray['PostCodeinv'];
-            $City = $mainarray['Cityinv'];
-            $State = $mainarray['Stateinv'];
-            $Email = $mainarray['DefaultEmail'];
-        }
+    // Data about postalcode, city, state or email
 
-        //  Display array when quality of response is less than one. If this value is equal than 1 it means that the address match 100%, otherwise the api will return some alternatives
+    $PostCode = $original_address['postal_code'];
+    $City = $original_address['city'];
+    $State = $original_address['state'];
+    $Email = $original_address['email'];
 
 
+    // The subject of the message.
+    $mail->Subject = 'Address Validation Failed - Order No ' . $SO . '';
 
-        // The subject of the message.
-		$mail->Subject = 'Address Validation Failed - Order No '.$SO.'';
+    $instructions = 'This tool validates the address using City, State/Province and PostalCode. State/Province is 2 letters and field in Sage is County,ie. CA/NY/FL..... PostalCode is numeric, please avoid blank spaces or special characters.';
 
-        $instructions = 'This tool validates the address using City, State/Province and PostalCode. State/Province is 2 letters and field in Sage is County,ie. CA/NY/FL..... PostalCode is numeric, please avoid blank spaces or special characters.';
+    // The message in HTML
 
-		// The message in HTML
 
-        $message = '<div style="margin:0;padding:0;color:#333;font-style:normal;line-height:1.42857143;font-size:14px;font-family:Helvetica,Arial,sans-serif;font-weight:400;text-align:left;background-color:#f5f5f5"> ';
+    $message = '<div style="margin:0;padding:0;color:#333;font-style:normal;line-height:1.42857143;font-size:14px;font-family:Helvetica,Arial,sans-serif;font-weight:400;text-align:left;background-color:#f5f5f5"> ';
 
-        $message .= '<table width="100%" style="border-collapse:collapse;margin:0 auto">
+    $message .= '<table width="100%" style="border-collapse:collapse;margin:0 auto">
         <tbody><tr>
             <td align="center" style="font-family:Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:30px;width:100%">
                 <table align="center" style="border-collapse:collapse;margin:0 auto;text-align:left;width:660px">
@@ -86,59 +79,49 @@ function my_mail_function($mainarray,$status_r, $SO,$DocumentCreatedBy, $host_sm
                     <tr>
                     <td style="font-family:Helvetica,Arial,sans-serif;vertical-align:top;background-color:#fff;padding:25px">';
 
-        $message .= '<table style="border-collapse:collapse;margin-bottom:10px width:50%">';
+    $message .= '<table style="border-collapse:collapse;margin-bottom:10px width:50%">';
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='margin-top:0;margin-bottom:10px;text-align:center'><u>ADDRESS WRONG</u></b></td><td style='margin-top:0;margin-bottom:10px;text-align:center'></td></tr><br>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='margin-top:0;margin-bottom:10px;text-align:center'><u>ADDRESS WRONG</u></b></td><td style='margin-top:0;margin-bottom:10px;text-align:center'></td></tr><br>";
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Order Taken By: </td><td>" .$DocumentCreatedBy. "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Order Taken By: </td><td>" . $DocumentCreatedBy . "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>City: </td><td text-align:left>" .$City. "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>City: </td><td text-align:left>" . $City . "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>State/Province(Only 2 Letters): </td><td>" .$State. "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>State/Province(Only 2 Letters): </td><td>" . $State . "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Post Code: </td><td>" .$PostCode. "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Post Code: </td><td>" . $PostCode . "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Email: </td><td>" .$Email. "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
-
-
-
-        if(isset($status_r[0]['Quality'])){
-
-            $quality_value = $status_r[0]['Quality'];
-
-            if($quality_value < 1){
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Email: </td><td>" . $Email . "</td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
 
-            $Alternative_city = $status_r[0]['Address']['City'];
-            $Alternative_state = $status_r[0]['Address']['StateProvinceCode'];
-            $Alternative_postalcode = $status_r[0]['PostalCodeLowEnd'];
-            $City_alert = NULL;
-            if($City !== $Alternative_city){
-                $City_alert = '(Maybe that is the right city?)';
-            }
-            $State_alert = NULL;
-            if($State !== $Alternative_state){
-                $State_alert = '(Maybe that is the right state?)';
-            }
-            $PostCode_alert = NULL;
-            if($PostCode !== $Alternative_postalcode){
-                $PostCode_alert = '(Maybe that is the right state?)';
-            }
+    if ($status == 'alternate' || $status == 'mismatched') {
 
+        $Alternative_city = $other_address['city'];;
+        $Alternative_state = $other_address['state'];
+        $Alternative_postalcode = $other_address['postal_code'];
 
+        if ($status == 'alternate') {
             $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>_____</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
             $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>It's not a 100% match, the closest alternative is:</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
-            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative City: " .$Alternative_city. "".$City_alert."</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
-            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative State/Province: " .$Alternative_state."". $State_alert."</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
-            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative PostalCode: " .$Alternative_postalcode."". $PostCode_alert."</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
-            }
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative City: " . $Alternative_city . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative State/Province: " . $Alternative_state . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Alternative PostalCode: " . $Alternative_postalcode . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
         }
+         elseif ($status == 'mismatched') {
 
-        $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>_____</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>_____</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>The address seems to be correct but mismatched in the entry, Here is the proper address</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>City: " . $Alternative_city . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>State/Province: " . $Alternative_state . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+            $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>PostalCode: " . $Alternative_postalcode . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
+        }
+    }
 
-		$message .= "<tr><td colspan=2 style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Instructions: " .$instructions. "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr></tbody></table>";
+    $message .= "<tr><td style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>_____</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr>";
 
-        $message .= "<tr><td style='font-family:Helvetica,Arial,sans-serif;vertical-align:top;background-color:#f5f5f5;padding:25px'><p style='margin-top:0;margin-bottom:10px;text-align:center'>Kind regards,</p><p style='margin-top:0;margin-bottom:10px;text-align:center'></p>
+    $message .= "<tr><td colspan=2 style='font-family:'Open Sans','Helvetica Neue','Helvetica','Arial','sans-serif';'vertical-align:top;padding-bottom:5px'><b style='font-weight:700;margin-right:10px'>Instructions: " . $instructions . "</b></td><td style='font-family':'Open Sans','Helvetica Neue','Helvetica,Arial,sans-serif;vertical-align:top;padding-bottom:5px'></td></tr></tbody></table>";
+
+    $message .= "<tr><td style='font-family:Helvetica,Arial,sans-serif;vertical-align:top;background-color:#f5f5f5;padding:25px'><p style='margin-top:0;margin-bottom:10px;text-align:center'>Kind regards,</p><p style='margin-top:0;margin-bottom:10px;text-align:center'></p>
 			  <tr>
 				<td bgcolor='#1f3855' style='padding: 12px 18px 12px 18px; border-radius:3px' align='center'><a href='add target here' target='_blank' style='font-size: 16px; font-family: Helvetica, Arial, sans-serif; font-weight: normal; color: #ffffff; text-decoration: none; display: inline-block;'></a></td>
 			  </tr>
@@ -146,83 +129,71 @@ function my_mail_function($mainarray,$status_r, $SO,$DocumentCreatedBy, $host_sm
         <tr><td align='center' style='font-family:Avenir,Helvetica,sans-serif;box-sizing:border-box;padding:35px'><p style='font-family:Avenir,Helvetica,sans-serif;box-sizing:border-box;line-height:1.5em;margin-top:0;color:#aeaeae;font-size:12px;text-align:center'></p></td></tr>
         ";
 
-        $message .= "</tbody></table></td></tr></tbody></table></div>";
+    $message .= "</tbody></table></td></tr></tbody></table></div>";
 
-        $mail->Body = $message;
+    $mail->Body = $message;
 
-        $mail->isHTML(true);
+    $mail->isHTML(true);
 
-		$mail->send();
-	}
+    $mail->send();
+}
+
 
 
 /**
  * This function checks all the live orders in Production where Country is XXX and request address validation
  *
  * @param string  $all_data All Sales Order in Production with delivery address or invoice address
- * @param string $country What country we want to check
- * @param string $url     url for the shipping api address validation
- * @param string $ups_accesslicensenumber   Shipping Company License Numbre
- * @param string $ups_userid   Shipping User ID
- * @param string $ups_password   Shipping password
  */
 
-function getLiveAddressSage($all_data, $url, $nextbillion_token){
-    $host_smtp = PARAMS['host_smtp'];$email = PARAMS['email'];$pwd = PARAMS['pwd'];$emailto = PARAMS['emailto']; // Credentials
-        if (is_array($all_data) || is_object($all_data))
-        {
-            foreach ($all_data as $value)
-            {
-                foreach ($value as $val)
-                {
+function getLiveAddressSage($all_data)
+{
 
-                    if(($val['UseInvoiceAddress'] == 0 &&  strlen($val['EmailAddress']) < 10) || ($val['UseInvoiceAddress'] == 1 &&  strlen($val['DefaultEmail']) < 10)){
-                        $SO = $val['DocumentNo'];
-                        $DocumentCreatedBy = $val['DocumentCreatedBy'];
-                        $mainarray = $val;
-                        $status_r = 0;
-                        // my_mail_function($mainarray,$status_r, $SO, $DocumentCreatedBy,$host_smtp,$email,$pwd,$emailto);
-                    }else{
-                    if($val['UseInvoiceAddress'] == 0 ){ //UseInvoiceAddress = 0 means send to Delivery Address
-                        $Address = NULL;
-                        $PostCode =  str_replace('+','%20', urlencode($val['PostCode']));
-                        $City =  str_replace('+','%20', urlencode($val['City']));
-                        $State =  str_replace('+','%20', urlencode($val['State']));
-                        $Country =  str_replace('+','%20', urlencode($val['Country']));
-                        $SO =   str_replace('+','%20', urlencode($val['DocumentNo']));
-                        $DocumentCreatedBy = $val['DocumentCreatedBy'];
+    if (is_array($all_data) || is_object($all_data)) {
+        foreach ($all_data as $value) {
+            foreach ($value as $val) {
+
+                if (($val['UseInvoiceAddress'] == 0 &&  strlen($val['EmailAddress']) < 10) || ($val['UseInvoiceAddress'] == 1 &&  strlen($val['DefaultEmail']) < 10)) {
+                    $mainarray = $val;
+                    //my_mail_function($mainarray, null, null, "");
+                } else {
+                    if ($val['UseInvoiceAddress'] == 0) { //UseInvoiceAddress = 0 means send to Delivery Address
+
+                        $PostCode =  trim($val['PostCode']);
+                        $City =  trim($val['City']);
+                        $State =  trim($val['State']);
+                        $Country =  trim($val['Country']);
+                        $AddressLine =  trim($val['AddressLine1']);
+                        $AddressLine2 =  trim($val['AddressLine2']);
+                        $AddressLine .= ' ' . $AddressLine2;
+
                         $Email = $val['EmailAddress'];
-                        $AddressLine =  str_replace('+','%20', urlencode($val['AddressLine1']));
-                        $AddressLine2 =  str_replace('+','%20', urlencode($val['AddressLine2']));
-                        $AddressLine .= $AddressLine2;
-                        $Address = array($AddressLine,$City,$State,$Country);
+
                         $mainarray = $val;
-                        $post_data = '' . implode(',', $Address) . '';
-                        $post_data .= $nextbillion_token;
-                        var_dump($post_data);
-                        // var_dump($post_data);
-                        // post_shipping_api($mainarray, $url,$post_data,$SO,$DocumentCreatedBy);
-                    }elseif($val['UseInvoiceAddress'] == 1 ) { //UseInvoiceAddress = 1 means send to Invoice Address
-                        $Address = NULL;
-                        $PostCodeinv = str_replace('+','%20', urlencode($val['PostCodeinv']));
-                        $Cityinv = str_replace('+','%20', urlencode($val['Cityinv']));
-                        $Stateinv = str_replace('+','%20', urlencode($val['Stateinv']));
-                        $Country =  str_replace('+','%20', urlencode($val['Countryinv']));
-                        $SO = $val['DocumentNo'];
-                        $DocumentCreatedBy = $val['DocumentCreatedBy'];
-                        $mainarray = $val;
+
+                        post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $Country, $Email);
+                    } elseif ($val['UseInvoiceAddress'] == 1) { //UseInvoiceAddress = 1 means send to Invoice Address
+                        $PostCodeinv = trim($val['PostCodeinv']);
+                        $Cityinv = trim($val['Cityinv']);
+                        $Stateinv = trim($val['Stateinv']);
+                        $Countryinv =  trim($val['Countryinv']);
+
                         $Email = $val['DefaultEmail'];
-                        $AddressLine1 = str_replace('+','%20', urlencode($val['AddressLine1inv']));
-                        $AddressLine2 = str_replace('+','%20', urlencode($val['AddressLine2inv']));
-                        $post_data = '' . implode(',', $Address) . '';
-                        $post_data .= $nextbillion_token;
-                        // post_shipping_api($mainarray,$url,$post_data,$SO,$DocumentCreatedBy);
+
+                        $mainarray = $val;
+
+                        $AddressLine1 = trim($val['AddressLine1inv']);
+                        $AddressLine2 = trim($val['AddressLine2inv']);
+
+                        $AddressLine = $AddressLine1 . ' ' . $AddressLine2;
+
+                        post_shipping_api($mainarray, $AddressLine, $PostCodeinv, $Cityinv, $Stateinv, $Countryinv, $Email);
                     }
                 } //End condition to check if email is added
-                } // End Second Foreach
-            }// End First Foreach
-        }
-        }
+            } // End Second Foreach
+        } // End First Foreach
+    }
+}
 
 /**
  * This function adds the post to the API to Validate Address, if its an error sends an email to the Sales Department
@@ -233,46 +204,189 @@ function getLiveAddressSage($all_data, $url, $nextbillion_token){
  * @param string $DocumentCreatedBy   Who is the Sales Representative
  */
 
-function post_shipping_api($mainarray,$url,$post_data,$SO,$DocumentCreatedBy){
 
-        $host_smtp = PARAMS['host_smtp'];$email = PARAMS['email'];$pwd = PARAMS['pwd'];$emailto = PARAMS['emailto']; // Credentials
+function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $Country, $Email)
+{
 
-        $post_data_str  = json_encode($post_data);
 
-        // $ch = curl_init();
-        // curl_setopt($ch, CURLOPT_URL, $url);
-        // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data_str);
+    $original_address = [
+        "country" => $Country,
+        "state" => $State,
+        "city" => $City,
+        "postal_code" => $PostCode,
+        "street" => $AddressLine,
+        "email" => $Email,
+    ];
 
-        // $response = curl_exec($ch);
 
-        // // Print All response success validation and failure
-        // // echo '<pre>';var_dump($response);
+    // Should we add postCode? Where in the array?
+    $AddressQry = implode(", ", array($AddressLine, $City, $State, $Country));
 
-        // $response  = json_decode($response, 1);
+    // We can add 'in' as a parameter if we have the iso-3 country code
+    $params = array('q' => $AddressQry, 'key' => PARAMS['nextbillion_token'], 'limit' => 2);
 
-        // $status = $response["AddressValidationResponse"]["Response"]["ResponseStatusDescription"];
-        // $status_r = NULL;
-        // if(isset($response["AddressValidationResponse"]["AddressValidationResult"])){
-        //     $status_r = $response["AddressValidationResponse"]["AddressValidationResult"];
-        // }
+    $endpoint = PARAMS['nextbillion_endpoint'];
 
-        // $flag = 0;
+    $url = $endpoint . '?' . http_build_query($params);
 
-        // if ($status == 'Success') {
-        //     foreach ($response["AddressValidationResponse"]["AddressValidationResult"] as $data) {
-        //         if (isset($data["Rank"])) {
-        //             $flag++;
-        //         }
-        //     }
-        // }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        // if($status == 'Failure' || $flag>0 ){
-        //   my_mail_function($mainarray,$status_r, $SO, $DocumentCreatedBy,$host_smtp,$email,$pwd,$emailto);
-        // }
+    $response = curl_exec($ch);
 
-        curl_close($ch);
+    curl_close($ch);
 
+    //print $response;
+
+    $rdata = json_decode($response, true);
+
+    if (!isset($rdata['items'])) {
+
+        // There is error. API key limit or some others
+        // Handle error
+
+        return;
     }
 
+    $this_address = null;
+    $row_count = 0;
+    foreach ($rdata['items'] as $item) {
+        $queryScore = $item['scoring']['queryScore'];
+        if ($queryScore == 1) {
+            // Address is valid
+            // What happen next?
+
+            return;
+        }
+
+        $countryLabel = $item['address']['countryName'];
+        $stateLabel = $item['address']['state'];
+        $cityLabel = $item['address']['city'];
+        $postalCodeLabel = $item['address']['postalCode'];
+
+        $streetLabel = $item['address']['street'];
+
+        // Let match each of the labels
+
+        $country_match = word_match($countryLabel, $Country);
+        $state_match = word_match($stateLabel, $State);
+        $city_match = word_match($cityLabel, $City);
+        $postal_code_match = word_match($postalCodeLabel, $PostCode);
+
+        // Can we say addressline is thesame as street address?
+        $address_match = word_match($streetLabel, $AddressLine);
+
+        // Now we test if the labels are all correct
+        // Any need to add postalcode in the match
+        // Address seems to be far differ,
+        // You can add address and postalcode if you feel so
+        if ($country_match && $state_match && $city_match) {
+            // I guess the address is valid
+            // Though the score was not 1 (100%)
+
+            return;
+        }
+
+        // Address seems not to be valid, Lets check if address mismatch
+        // Any need to add the street/address here, remove form array if appropraiate
+        $apiLabels = [$countryLabel, $stateLabel, $cityLabel, $postalCodeLabel, $streetLabel];
+
+        $country_found = find_word_match($apiLabels, $Country);
+        $state_found = find_word_match($apiLabels, $State);
+        $city_found = find_word_match($apiLabels, $City);
+        $postal_code_found = find_word_match($apiLabels, $PostCode);
+
+
+        // Now we test if the labels are all found
+        // Any need to add postalcode in the match
+        // You can add postalcode if you feel so
+        if ($country_found && $state_found && $city_found) {
+
+            //This means address is correct but fields are mismatched
+            $this_address = [
+                "country" => $countryLabel,
+                "state" => $stateLabel,
+                "city" => $cityLabel,
+                "postal_code" => $postalCodeLabel,
+                //"street" => $streetLabel,   We didn't actually match street here
+            ];
+
+            // We can send our Email with the Alternate address details
+            my_mail_function($mainarray, $original_address, $this_address, 'mismatched');
+
+            return;
+        }
+
+
+        // If we are here probably the first item should be the most
+        // nearly matched alternate address
+        //This means address is correct but fields are mismatched
+        if ($row_count == 0) {
+            $this_address = [
+                "country" => $countryLabel,
+                "state" => $stateLabel,
+                "city" => $cityLabel,
+                "postal_code" => $postalCodeLabel,
+                //"street" => $streetLabel,   We didn't actually match street here
+            ];
+        }
+
+        $row_count++;
+    } // End of forach loop
+
+    // No address found
+    if ($this_address == null) {
+
+        my_mail_function($mainarray, $original_address, null, 'notfound');
+    } else {
+        // We have an alternate address
+        my_mail_function($mainarray, $original_address, $this_address, 'alternate');
+    }
+}
+
+
+/**
+ * This function chececk if two words are equal or similar
+ * Can be improve to ignore spelling mistakes or space
+ *
+ * @param string  $word1 first word
+ * @param string $words2 second word
+ *
+ * @return bolean return true or false
+ */
+
+function word_match($word1, $word2)
+{
+
+    // This is just a simple implementation of word match
+    // What is is just a minor space difference or spelling mistake
+    // Maybe are are word processor for this
+
+    return (strtolower($word1) == strtolower($word2));
+}
+
+
+/**
+ * This function chececk if a words is  equal or similar
+ * to any of the word in an array
+ * Can be improve to ignore spelling mistakes or space
+ *
+ * @param string  $word first word
+ * @param array $words Array of words
+ *
+ * @return boolean Return true if found else false
+ */
+function find_word_match($words, $word)
+{
+
+    foreach ($words as $wd) {
+        $found = word_match($wd, $word);
+        if ($found) {
+            return $found;
+        }
+    }
+
+    return false;
+}
