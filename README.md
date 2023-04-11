@@ -63,7 +63,7 @@ API Geocode Documentation [here](https://docs.nextbillion.ai/docs/places/api/geo
 
 Endpoint: https://api.nextbillion.io/h/geocode
 
-i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Barrio Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
+i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
 
       {{apitoken}} its the bearer token
       q= its all the address
