@@ -1,6 +1,6 @@
 # Introduction Sage200 Address Validation Tool
 
-This app validates that the customer address is correct. In some cases, customers make mistakes or sometimes staff members input the address manually in their ERP system causing errors. With an address validation tool you can save time and money as it will detect than an address is incorrect before you send it over.
+This app validates than a address is correct. In some cases, customers make mistakes or sometimes staff members input the address manually in their ERP system causing errors. With an address validation tool you can save time and money as it will detect than an address is incorrect before you send it over.
 
 How it works? The app runs X times per day and access to Sage200 database and reads all live Sales Orders. If the delivery address is marked as billing address, it will go to the account and get the billing information. Otherwise it will use the delivery address. Then will send the address data to the third party address validation tool, if the score is 100% (perfect match) the process will end. If the score is below 100% it will send an email, showing that the address is incorrect and it some cases will show an alternative address. i.e city could be this or postal code this?
 
@@ -63,7 +63,7 @@ API Geocode Documentation [here](https://docs.nextbillion.ai/docs/places/api/geo
 
 Endpoint: https://api.nextbillion.io/h/geocode
 
-i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Barrio Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
+i.e. https://api.nextbillion.io/h/geocode?key={{apitoken}}&q=4 Torrelavega, Miravalles Perfect Score&%26limit%3D=3 &%26in%3D=ES
 
       {{apitoken}} its the bearer token
       q= its all the address
