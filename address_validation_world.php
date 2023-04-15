@@ -348,7 +348,7 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
 
 
 /**
- * This function chececk if two words are equal or similar
+ * This function check if two words are equal or similar
  * Can be improve to ignore spelling mistakes or space
  *
  * @param string  $word1 first word
@@ -369,7 +369,7 @@ function word_match($word1, $word2)
 
 
 /**
- * This function chececk if a words is  equal or similar
+ * This function check if a words is  equal or similar
  * to any of the word in an array
  * Can be improve to ignore spelling mistakes or space
  *
