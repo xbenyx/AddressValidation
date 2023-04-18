@@ -14,7 +14,7 @@ getLiveAddressSage($all_data);
  * @param array $mainarray Object array of doc
  * @param array $original_address object array of the original address
  * @param array $other_address object array of the address gotten form api
- * @param string $status  Stateus of the address (alternate, mismatched, notfound)
+ * @param string $status  Status of the address (alternate, mismatched, notfound)
  */
 
 function my_mail_function($mainarray, $original_address, $other_address, $status)
