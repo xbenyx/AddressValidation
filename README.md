@@ -6,7 +6,7 @@ How it works? The app runs X times per day and access to Sage200 database and re
 
 If the address is correct but data is in the wrong fields, can I get a different email? Yes, it will send a different email canned response. Sometimes customers/staff input the address in the wrong fields and that could affect shipping integrations as all the data is over the place
 
-Languague: The app is developed in PHP.
+Languague: The app is developed in PHP and works with cron jobs.
 
 ## Before you start
 
