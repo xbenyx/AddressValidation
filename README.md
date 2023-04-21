@@ -51,7 +51,7 @@ Billing Address
 
 ## Testing without database
 
-In the folder demo, it is a json array sample with 2 scenarios, using billing address and using delivery address.
+Go to the folder demo, you'll find a json array sample with 2 scenarios; one using billing address and other using delivery address.
 
 ## API used for Address Validation
 
