@@ -20,7 +20,7 @@ Install all the dependencies from the composer.json. We recomend use linux and s
 
 How to run it automatically? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
 
-## DB Variables
+## Database Variables
 
 Global Variables
 
@@ -49,7 +49,7 @@ Billing Address
       "MainTelephoneSubscriberNumber"
       "DefaultEmail"
 
-## Testing without database
+## Test without database
 
 Go to the folder demo, you'll find a json array sample with 2 scenarios; one using billing address and other using delivery address.
 
