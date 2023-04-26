@@ -76,7 +76,7 @@ Below is a demo video showing how to test the api using postman.
 
 Other documentation and information below
 
-Main website is [here](https://api.nextbillion.io)
+Main website [here](https://api.nextbillion.io)
 
 API Documentation is [here](https://docs.nextbillion.ai/)
 
