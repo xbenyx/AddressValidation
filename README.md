@@ -20,7 +20,7 @@ Install the dependencies using composer.json. We recomend use linux and set up a
 
 How to automate it? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
 
-## Database Variables
+## Database Variables Names
 
 Global Variables
 
