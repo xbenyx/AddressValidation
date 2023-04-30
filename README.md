@@ -18,9 +18,9 @@ Install the dependencies using composer.json. We recomend use linux and set up a
 2.2) Set database connection; database-> name of your database, database_user-> your database user, database_pwd-> your database password (Note. this application is using MSSQL but it could be easily configured to use MySQL)
 2.3) Set up Api for validation; we tested this app with multiple courier companies but we found that Nextbillion api offers the same at an amazing price. nextbillion_token -> add the bearer token here.
 
-How to run it automatically? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
+How to automate it? Go to your cron jobs (linux) and set up a job to run the script address_validation_world.php every X times per day
 
-## Database Variables
+## Database Variables Names
 
 Global Variables
 
@@ -76,7 +76,7 @@ Below is a demo video showing how to test the api using postman.
 
 Other documentation and information below
 
-Main website is [here](https://api.nextbillion.io)
+Main website [here](https://api.nextbillion.io)
 
 API Documentation is [here](https://docs.nextbillion.ai/)
 
