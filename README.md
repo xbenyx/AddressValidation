@@ -55,7 +55,7 @@ Go to the folder demo, you'll find a json array sample with 2 scenarios; one usi
 
 ## API used for Address Validation
 
-When we started this project, we used different third party applications and even some free tools such as UPS address validation tool. For example UPS USA, it is a free tool and works really well but we found a different tool that maybe it is not directly a address validation tool but i can be used as one and covers mostly all the countries in the world. When I requested some quotations, average price were over 1500€ monthly. Next Billion app claims to be free for 100000 api calls, that is more than enough for our project.
+We used different third party applications and even some free tools such as UPS address validation tool. For example UPS USA, it is a free tool and works really well but we found a different tool that maybe it is not directly a address validation tool but i can be used as one and covers mostly all the countries in the world. When I requested some quotations, average price were over 1500€ monthly. Next Billion app claims to be free for 100000 api calls, that is more than enough for our project.
 
 For our project we will be using Geocode (Note. You will need to contact them to get a token key)
 
