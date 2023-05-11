@@ -238,8 +238,6 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
 
     curl_close($ch);
 
-    //print $response;
-
     $rdata = json_decode($response, true);
 
     if (!isset($rdata['items'])) {
@@ -257,7 +255,6 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
         if ($queryScore == 1) {
             // Address is valid
             // What happen next?
-
             return;
         }
 
