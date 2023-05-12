@@ -219,10 +219,10 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
     ];
 
 
-    // Should we add postCode? Where in the array?
+    // We can includo postal code
     $AddressQry = implode(", ", array($AddressLine, $City, $State, $Country));
 
-    // We can add 'in' as a parameter if we have the iso-3 country code
+    // We can add 'in' as a parameter if we have the ISO-3 country code
     $params = array('q' => $AddressQry, 'key' => PARAMS['nextbillion_token'], 'limit' => 2);
 
     $endpoint = PARAMS['nextbillion_endpoint'];
@@ -242,7 +242,7 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
 
     if (!isset($rdata['items'])) {
 
-        // There is error. API key limit or some others
+        // There is an error. API key limit or some others
         // Handle error
 
         return;
@@ -351,7 +351,7 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
  * @param string  $word1 first word
  * @param string $words2 second word
  *
- * @return bolean return true or false
+ * @return bolean
  */
 
 function word_match($word1, $word2)
