@@ -298,7 +298,6 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
 
         // Now we test if the labels are all found
         // Any need to add postalcode in the match
-        // You can add postalcode if you feel so
         if ($country_found && $state_found && $city_found) {
 
             //This means address is correct but fields are mismatched
@@ -326,7 +325,7 @@ function post_shipping_api($mainarray, $AddressLine, $PostCode, $City, $State, $
                 "state" => $stateLabel,
                 "city" => $cityLabel,
                 "postal_code" => $postalCodeLabel,
-                //"street" => $streetLabel,   We didn't actually match street here
+                //"street" => $streetLabel,   We didn't actually match street here.
             ];
         }
 
