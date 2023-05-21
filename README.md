@@ -78,6 +78,6 @@ Other documentation and information below
 
 Main website [here](https://api.nextbillion.io)
 
-API Documentation is [here](https://docs.nextbillion.ai/)
+API Documentation link here [here](https://docs.nextbillion.ai/)
 
 
