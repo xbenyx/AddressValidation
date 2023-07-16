@@ -74,7 +74,7 @@ Below is a demo video showing how to test the api using postman.
 
 ![xbenyx - Animated gif demo](demo/postman.gif)
 
-Other documentation and information below
+Additional documentation and information below
 
 Main website [here](https://api.nextbillion.io)
 
