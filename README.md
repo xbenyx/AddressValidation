@@ -10,7 +10,7 @@ Languague: The app is developed in PHP and works with cron jobs.
 
 ## Initial
 
-Install the dependencies using composer.json. We recomend use linux and set up a cron job to run the script. (Note. you can use a Raspberry Pi)
+Install the dependencies using composer.json. We recomend using linux and set up a cron job to run the script. (ie. you can use a Raspberry Pi)
 
 1) Go to the folder project and cmd "composer install"  (Note: You will need composer. [here](https://getcomposer.org/download/) )
 2) Add your credentials. Go to the folder PHP-> config.php
