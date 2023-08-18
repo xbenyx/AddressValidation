@@ -27,7 +27,7 @@ Global Variables
       "UseInvoiceAddress" -> Boolean, if its 0 use Delivery Address and 1 use Billing Address
       "DocumentNo": -> Indicates the Sales Order Number
 
-Delivery Address
+Delivery Address;
 
       "PostalName"
       "AddressLine1"
