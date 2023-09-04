@@ -29,21 +29,21 @@ $tsql = "SELECT DISTINCT [DocumentNo]
             ,ISNULL(cont.DefaultEmail, '') AS DefaultEmail
             ,so.UseInvoiceAddress
             ,so.DocumentCreatedBy
-    FROM [MULLANIE].[dbo].[SOPOrderReturnLine] AS sl
-    LEFT JOIN [MULLANIE].[dbo].[SiWorksOrder] AS wo ON sl.SOPOrderReturnLineID = wo.SOPOrderReturnLineId
-    LEFT JOIN [MULLANIE].[dbo].[SOPOrderReturn] AS so ON sl.SOPOrderReturnID = so.SOPOrderReturnID
-    LEFT JOIN [MULLANIE].[dbo].[SLCustomerAccount] AS ca ON so.[CustomerID] = ca.[SLCustomerAccountID]
-    LEFT JOIN [MULLANIE].[dbo].[SLCustomerLocation] AS lo ON lo.[SLCustomerAccountID] = ca.[SLCustomerAccountID]
-    LEFT JOIN [MULLANIE].[dbo].[SYSCountryCode] AS cc ON ca.[SYSCountryCodeID] = cc.[SYSCountryCodeID]
-    LEFT JOIN [MULLANIE].[dbo].[SOPDocDelAddress] AS dd ON so.[SOPOrderReturnID] = dd.[SOPOrderReturnID]
-    LEFT JOIN [MULLANIE].[dbo].[SYSCountryCode] AS dc ON dd.CountryCodeID = dc.SYSCountryCodeID
-    LEFT JOIN [MULLANIE].[dbo].[StockItem] AS MLSKU ON wo.StockItemID = MLSKU.ItemID
-    LEFT JOIN [MULLANIE].[dbo].[ProductGroup] AS MLGroup ON MLSKU.ProductGroupID = MLGroup.ProductGroupID
-    LEFT JOIN [MULLANIE].[dbo].[BomRecord] ON [MULLANIE].[dbo].[BomRecord].[Reference] = sl.[ItemCode]
-    LEFT JOIN [MULLANIE].[dbo].[swapout] sw ON ca.CustomerAccountNumber = sw.account AND MLSKU.Code LIKE (sw.product + '%') AND MLSKU.Code = sw.component
-    LEFT JOIN [MULLANIE].[dbo].[StockItem] AS swstk ON sw.component_swap_for = swstk.Code
-    LEFT JOIN [MULLANIE].[dbo].[BinItem] AS swbin ON swstk.[ItemID] = swbin.[ItemID]
-    LEFT JOIN [MULLANIE].[dbo].[SLCustomerContactDefaultsVw] cont ON cont.SLCustomerAccountID = ca.SLCustomerAccountID
+    FROM [DB].[dbo].[SOPOrderReturnLine] AS sl
+    LEFT JOIN [DB].[dbo].[SiWorksOrder] AS wo ON sl.SOPOrderReturnLineID = wo.SOPOrderReturnLineId
+    LEFT JOIN [DB].[dbo].[SOPOrderReturn] AS so ON sl.SOPOrderReturnID = so.SOPOrderReturnID
+    LEFT JOIN [DB].[dbo].[SLCustomerAccount] AS ca ON so.[CustomerID] = ca.[SLCustomerAccountID]
+    LEFT JOIN [DB].[dbo].[SLCustomerLocation] AS lo ON lo.[SLCustomerAccountID] = ca.[SLCustomerAccountID]
+    LEFT JOIN [DB].[dbo].[SYSCountryCode] AS cc ON ca.[SYSCountryCodeID] = cc.[SYSCountryCodeID]
+    LEFT JOIN [DB].[dbo].[SOPDocDelAddress] AS dd ON so.[SOPOrderReturnID] = dd.[SOPOrderReturnID]
+    LEFT JOIN [DB].[dbo].[SYSCountryCode] AS dc ON dd.CountryCodeID = dc.SYSCountryCodeID
+    LEFT JOIN [DB].[dbo].[StockItem] AS MLSKU ON wo.StockItemID = MLSKU.ItemID
+    LEFT JOIN [DB].[dbo].[ProductGroup] AS MLGroup ON MLSKU.ProductGroupID = MLGroup.ProductGroupID
+    LEFT JOIN [DB].[dbo].[BomRecord] ON [MULLANIE].[dbo].[BomRecord].[Reference] = sl.[ItemCode]
+    LEFT JOIN [DB].[dbo].[swapout] sw ON ca.CustomerAccountNumber = sw.account AND MLSKU.Code LIKE (sw.product + '%') AND MLSKU.Code = sw.component
+    LEFT JOIN [DB].[dbo].[StockItem] AS swstk ON sw.component_swap_for = swstk.Code
+    LEFT JOIN [DB].[dbo].[BinItem] AS swbin ON swstk.[ItemID] = swbin.[ItemID]
+    LEFT JOIN [DB].[dbo].[SLCustomerContactDefaultsVw] cont ON cont.SLCustomerAccountID = ca.SLCustomerAccountID
     WHERE [WOStatus] NOT IN ('Deleted')
     AND Level = '0'
     AND so.[DocumentTypeID] = '0'
